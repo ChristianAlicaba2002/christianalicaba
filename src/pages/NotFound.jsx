@@ -106,7 +106,7 @@ export default function NotFound() {
 
       <footer className="relative z-10 flex items-center justify-between px-6 py-5 font-mono text-[11px] tracking-[0.22em] text-muted sm:px-8">
         <span>PH</span>
-        <span>2026</span>
+        <span>&copy; {new Date().getFullYear()} Christian Dave L. Alicaba. All rights reserved.</span>
       </footer>
     </div>
   );
