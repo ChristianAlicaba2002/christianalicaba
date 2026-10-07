@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
-import { Loader } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { CircleCheck, CircleX, Loader, X } from "lucide-react";
 import { useForm, ValidationError } from "@formspree/react";
 import { SectionLabel } from "../components/ui";
 
@@ -7,7 +8,13 @@ function getFormspreeId(value) {
   if (!value) return "";
   const trimmed = String(value).trim();
   const match = trimmed.match(/formspree\.io\/f\/([^/?#]+)/i);
-  return match ? match[1] : trimmed;
+  const id = match ? match[1] : trimmed;
+  if (!/^[a-z0-9]+$/i.test(id)) {
+    console.error(
+      `Invalid VITE_FORMSPREE_ID "${trimmed}". Use the form ID (e.g. xnjwnwpp) or https://formspree.io/f/<id>.`
+    );
+  }
+  return id;
 }
 
 const FORMSPREE = getFormspreeId(import.meta.env.VITE_FORMSPREE_ID);
@@ -22,8 +29,90 @@ const details = [
   { label: "Location", value: "Philippines" },
 ];
 
+const TOASTS = {
+  success: {
+    Icon: CircleCheck,
+    title: "Message sent",
+    body: "Thanks for reaching out. I'll get back to you soon.",
+    iconClass: "text-emerald-500",
+  },
+  error: {
+    Icon: CircleX,
+    title: "Couldn't send",
+    body: "Please try again or email me directly.",
+    iconClass: "text-red-500",
+  },
+};
+
+function Toast({ type, onClose }) {
+  useEffect(() => {
+    if (!type) return;
+    const timer = setTimeout(onClose, 5000);
+    return () => clearTimeout(timer);
+  }, [type, onClose]);
+
+  const toast = type ? TOASTS[type] : null;
+
+  return (
+    <div className="pointer-events-none fixed inset-x-4 bottom-6 z-50 flex justify-center sm:inset-x-auto sm:right-6 sm:justify-end">
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            key={type}
+            role={type === "error" ? "alert" : "status"}
+            aria-live="polite"
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.96 }}
+            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="pointer-events-auto relative flex w-full max-w-sm items-start gap-3 overflow-hidden rounded-lg border border-border bg-card p-4 shadow-lg"
+          >
+            <toast.Icon size={20} className={`mt-0.5 shrink-0 ${toast.iconClass}`} />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-foreground">{toast.title}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted">{toast.body}</p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Dismiss notification"
+              className="shrink-0 text-muted hover:text-foreground"
+            >
+              <X size={16} />
+            </button>
+            <motion.span
+              aria-hidden="true"
+              className="absolute bottom-0 left-0 h-0.5 w-full origin-left bg-foreground/20"
+              initial={{ scaleX: 1 }}
+              animate={{ scaleX: 0 }}
+              transition={{ duration: 5, ease: "linear" }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function ContactMe() {
-  const [state, handleSubmit] = useForm(FORMSPREE);
+  const [state, handleSubmit, resetForm] = useForm(FORMSPREE);
+  const formRef = useRef(null);
+  const [toast, setToast] = useState(null);
+  const closeToast = useCallback(() => setToast(null), []);
+  // useForm returns a new reset function every render; keep it in a ref so it doesn't retrigger the effects below
+  const resetFormRef = useRef(resetForm);
+  resetFormRef.current = resetForm;
+
+  useEffect(() => {
+    if (!state.succeeded) return;
+    setToast("success");
+    formRef.current?.reset();
+    resetFormRef.current();
+  }, [state.succeeded]);
+
+  useEffect(() => {
+    if (state.errors && state.errors.length > 0) setToast("error");
+  }, [state.errors]);
 
   return (
     <div className="w-full bg-background px-6 py-24 sm:px-8">
@@ -73,16 +162,7 @@ export default function ContactMe() {
           </dl>
 
           <div>
-            {state.succeeded && (
-              <p className="mb-8 text-sm text-foreground">Sent. I&apos;ll get back to you soon.</p>
-            )}
-            {state.errors && state.errors.length > 0 && (
-              <p className="mb-8 text-sm text-red-600 dark:text-red-400">
-                Couldn&apos;t send. Try again or email me directly.
-              </p>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-8" method="post">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-8" method="post">
               <div>
                 <label htmlFor="name" className="block text-xs text-muted">
                   Name
@@ -164,6 +244,8 @@ export default function ContactMe() {
           </div>
         </motion.div>
       </div>
+
+      <Toast type={toast} onClose={closeToast} />
     </div>
   );
 }
