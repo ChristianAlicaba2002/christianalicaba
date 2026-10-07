@@ -1,24 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaHome, FaThLarge, FaUser, FaFolderOpen, FaEnvelope } from "react-icons/fa";
-import logo from "../assets/images/myPicture.webp";
+import ThemeToggle from "./ThemeToggle";
 
 const NAV_ITEMS = [
-  { id: "home", label: "Home", Icon: FaHome },
-  { id: "dashboard", label: "Dashboard", Icon: FaThLarge },
-  { id: "aboutme", label: "About", Icon: FaUser },
-  { id: "projects", label: "Projects", Icon: FaFolderOpen },
-  { id: "contactme", label: "Contact", Icon: FaEnvelope },
+  { id: "home", label: "Home" },
+  { id: "dashboard", label: "Skills" },
+  { id: "aboutme", label: "About" },
+  { id: "projects", label: "Work" },
+  { id: "contactme", label: "Contact" },
 ];
-
-const navVariants = {
-  hidden: { opacity: 0, y: -20 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] },
-  }),
-};
 
 export default function Navigation({ activeSection, onNavigate }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -30,75 +20,57 @@ export default function Navigation({ activeSection, onNavigate }) {
 
   return (
     <motion.header
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-xl bg-black/80 border-b border-white/10"
+      transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="fixed top-0 right-0 left-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-xl"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          <motion.button
+      <nav className="mx-auto max-w-5xl px-6 sm:px-8">
+        <div className="flex h-16 items-center justify-between lg:h-[4.5rem]">
+          <button
             type="button"
             onClick={() => handleNav("home")}
-            className="flex items-center gap-3 group"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="text-sm font-semibold tracking-tight text-foreground"
           >
-            <img
-              src={logo}
-              alt="Christian"
-              className="w-10 h-10 rounded-full border-2 border-white/20 object-cover group-hover:border-white/50 transition-colors"
-            />
-            <span className="text-white font-bold text-lg hidden sm:block">
-              Christian
-            </span>
-          </motion.button>
+            CA
+          </button>
 
-          <ul className="hidden lg:flex items-center gap-1">
-            {NAV_ITEMS.map((item, i) => {
+          <ul className="hidden items-center gap-8 lg:flex">
+            {NAV_ITEMS.map((item) => {
               const isActive = activeSection === item.id;
               return (
-                <motion.li
-                  key={item.id}
-                  custom={i}
-                  variants={navVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
+                <li key={item.id}>
                   <button
                     type="button"
                     onClick={() => handleNav(item.id)}
-                    className={`
-                      flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300
-                      ${isActive
-                        ? "text-black bg-white"
-                        : "text-gray-300 hover:text-white hover:bg-white/10"
-                      }
-                    `}
+                    className={`text-[13px] tracking-wide transition-colors ${
+                      isActive ? "text-foreground" : "text-muted hover:text-foreground"
+                    }`}
                   >
-                    <item.Icon className="w-4 h-4" />
                     {item.label}
                   </button>
-                </motion.li>
+                </li>
               );
             })}
           </ul>
 
-          <motion.button
-            type="button"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2.5 rounded-xl bg-white/10 border border-white/20 text-white"
-            aria-label="Toggle menu"
-            whileTap={{ scale: 0.95 }}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </motion.button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-2 text-foreground lg:hidden"
+              aria-label="Toggle menu"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M4 7h16M4 17h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -108,34 +80,24 @@ export default function Navigation({ activeSection, onNavigate }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="lg:hidden overflow-hidden border-t border-white/10 backdrop-blur-xl bg-black/90"
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden border-t border-border bg-background lg:hidden"
           >
-            <ul className="px-4 py-4 space-y-1">
-              {NAV_ITEMS.map((item, i) => {
+            <ul className="px-6 py-3">
+              {NAV_ITEMS.map((item) => {
                 const isActive = activeSection === item.id;
                 return (
-                  <motion.li
-                    key={item.id}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
+                  <li key={item.id}>
                     <button
                       type="button"
                       onClick={() => handleNav(item.id)}
-                      className={`
-                        flex items-center gap-3 w-full px-4 py-3 rounded-xl text-left font-medium transition-all duration-300
-                        ${isActive
-                          ? "text-black bg-white"
-                          : "text-gray-300 hover:text-white hover:bg-white/10"
-                        }
-                      `}
+                      className={`w-full py-3 text-left text-sm ${
+                        isActive ? "text-foreground" : "text-muted"
+                      }`}
                     >
-                      <item.Icon className="w-5 h-5 shrink-0" />
                       {item.label}
                     </button>
-                  </motion.li>
+                  </li>
                 );
               })}
             </ul>

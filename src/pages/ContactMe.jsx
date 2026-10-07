@@ -1,150 +1,106 @@
 import { motion } from "framer-motion";
-import { Mail, Phone, Github, MapPin, Send, CheckCircle, XCircle, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
 import { useForm, ValidationError } from "@formspree/react";
+import { SectionLabel } from "../components/ui";
 
-const FORMSPREE = import.meta.env.VITE_FORMSPREE_ID;
+function getFormspreeId(value) {
+  if (!value) return "";
+  const trimmed = String(value).trim();
+  const match = trimmed.match(/formspree\.io\/f\/([^/?#]+)/i);
+  return match ? match[1] : trimmed;
+}
+
+const FORMSPREE = getFormspreeId(import.meta.env.VITE_FORMSPREE_ID);
+
+const inputClass =
+  "w-full border-0 border-b border-border bg-transparent px-0 py-3 text-foreground placeholder:text-muted/70 outline-none transition-colors focus:border-foreground disabled:opacity-60";
+
+const details = [
+  { label: "Email", value: "christiandave120702@gmail.com", href: "mailto:christiandave120702@gmail.com" },
+  { label: "Phone", value: "+63 956 537 6522" },
+  { label: "GitHub", value: "ChristianAlicaba2002", href: "https://github.com/ChristianAlicaba2002" },
+  { label: "Location", value: "Philippines" },
+];
 
 export default function ContactMe() {
   const [state, handleSubmit] = useForm(FORMSPREE);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black p-4 lg:p-8 w-full relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-white rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gray-300 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 w-60 h-60 bg-gray-500 rounded-full mix-blend-multiply filter blur-xl opacity-5 animate-pulse animation-delay-4000"></div>
-      </div>
-
-      <div className="contact-container max-w-6xl mx-auto relative z-10">
+    <div className="w-full bg-background px-6 py-24 sm:px-8">
+      <div className="contact-container mx-auto max-w-5xl">
         <motion.div
-          className="text-center mb-8 lg:mb-12"
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          <h1 className="text-3xl lg:text-5xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent mb-6">
-            Get In Touch
-          </h1>
-          <p className="text-gray-300 text-lg lg:text-xl max-w-3xl mx-auto px-4 leading-relaxed">
-            I'm always open to discussing new projects, ideas, or opportunities
-            to collaborate.
+          <SectionLabel>Contact</SectionLabel>
+          <h2 className="max-w-xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            If you have a project or a question, write.
+          </h2>
+          <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted">
+            I usually reply within a day or two. Email is fine if you&apos;d rather skip the form.
           </p>
-          <div className="flex justify-center mt-6">
-            <div className="w-16 h-1 bg-gradient-to-r from-white to-gray-300 rounded-full"></div>
-          </div>
         </motion.div>
 
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12"
-          initial={{ opacity: 0, y: 32 }}
+          className="mt-16 grid gap-16 lg:grid-cols-[minmax(0,16rem)_1fr]"
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.45, delay: 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          {/* Left: Info */}
-          <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-6 lg:p-8 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-500 group">
-            <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-white flex items-center gap-3">
-              <div className="w-1 h-8 bg-gradient-to-b from-white to-gray-300 rounded-full"></div>
-              Where Can You Find Me
-            </h2>
-            <p className="text-gray-300 mb-8 text-sm lg:text-base leading-relaxed group-hover:text-white transition-colors duration-300">
-              Feel free to reach out through any of these channels. I'll get
-              back to you as soon as possible.
-            </p>
+          <dl className="space-y-8">
+            {details.map((item) => (
+              <div key={item.label}>
+                <dt className="text-xs text-muted">{item.label}</dt>
+                <dd className="mt-1 text-sm text-foreground">
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      target={item.href.startsWith("http") ? "_blank" : undefined}
+                      rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="underline decoration-border underline-offset-4 hover:decoration-foreground"
+                    >
+                      {item.value}
+                    </a>
+                  ) : (
+                    item.value
+                  )}
+                </dd>
+              </div>
+            ))}
+          </dl>
 
-            <div className="space-y-6">
-              <div className="flex items-center gap-4 text-gray-300 group/contact hover:text-white transition-all duration-300 p-3 rounded-xl hover:bg-white/10">
-                <div className="p-3 bg-gradient-to-r from-white to-gray-300 rounded-xl group-hover/contact:scale-110 transition-transform duration-300">
-                  <Mail size={20} className="text-orange-500" />
-                </div>
-                <span className="text-sm lg:text-base break-all font-medium">
-                  christiandave120702@gmail.com
-                </span>
-              </div>
-              <div className="flex items-center gap-4 text-gray-300 group/contact hover:text-white transition-all duration-300 p-3 rounded-xl hover:bg-white/10">
-                <div className="p-3 bg-gradient-to-r from-gray-400 to-gray-600 rounded-xl group-hover/contact:scale-110 transition-transform duration-300">
-                  <Phone size={20} className="text-sky-500" />
-                </div>
-                <span className="text-sm lg:text-base font-medium">+63 956 537 6522</span>
-              </div>
-              <div className="flex items-center gap-4 text-gray-300 group/contact hover:text-white transition-all duration-300 p-3 rounded-xl hover:bg-white/10">
-                <div className="p-3 bg-gradient-to-r from-gray-500 to-gray-700 rounded-xl group-hover/contact:scale-110 transition-transform duration-300">
-                  <Github size={20} className="text-white" />
-                </div>
-                <a
-                  href="https://github.com/ChristianAlicaba2002"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline text-sm lg:text-base break-all font-medium"
-                >
-                  github.com/ChristianAlicaba2002
-                </a>
-              </div>
-              <div className="flex items-center gap-4 text-gray-300 group/contact hover:text-white transition-all duration-300 p-3 rounded-xl hover:bg-white/10">
-                <div className="p-3 bg-gradient-to-r from-gray-600 to-gray-800 rounded-xl group-hover/contact:scale-110 transition-transform duration-300">
-                  <MapPin size={20} className="text-green-500" />
-                </div>
-                <span className="text-sm lg:text-base font-medium">Philippines</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Contact Form */}
-          <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-6 lg:p-8 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-500 group">
-            <h2 className="text-2xl lg:text-3xl font-bold mb-6 text-white flex items-center gap-3">
-              <div className="w-1 h-8 bg-gradient-to-b from-gray-400 to-gray-600 rounded-full"></div>
-              Send a Message
-            </h2>
-
-            {/* Status banners */}
+          <div>
             {state.succeeded && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 mb-6 p-4 rounded-xl bg-green-500/15 border border-green-500/30 text-green-400"
-              >
-                <CheckCircle size={18} className="shrink-0" />
-                <span className="text-sm font-medium">Message sent! I'll get back to you soon.</span>
-              </motion.div>
+              <p className="mb-8 text-sm text-foreground">Sent. I&apos;ll get back to you soon.</p>
             )}
             {state.errors && state.errors.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 mb-6 p-4 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400"
-              >
-                <XCircle size={18} className="shrink-0" />
-                <span className="text-sm font-medium">Failed to send. Please try again or email me directly.</span>
-              </motion.div>
+              <p className="mb-8 text-sm text-red-600 dark:text-red-400">
+                Couldn&apos;t send. Try again or email me directly.
+              </p>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5" method="post">
+            <form onSubmit={handleSubmit} className="space-y-8" method="post">
               <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-semibold text-gray-300 mb-2 group-hover:text-white transition-colors duration-300"
-                >
+                <label htmlFor="name" className="block text-xs text-muted">
                   Name
                 </label>
                 <input
                   id="name"
                   name="name"
                   type="text"
-                  placeholder="Your Name"
-                  className="w-full px-4 py-3.5 backdrop-blur-sm bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/40 transition-all duration-300 hover:bg-white/15"
+                  placeholder="Your name"
+                  className={inputClass}
                   required
                   disabled={state.submitting}
                 />
-                <ValidationError prefix="Name" field="name" errors={state.errors} className="text-red-400 text-xs mt-1" />
+                <ValidationError prefix="Name" field="name" errors={state.errors} className="mt-1 text-xs text-red-500" />
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-semibold text-gray-300 mb-2 group-hover:text-white transition-colors duration-300"
-                >
+                <label htmlFor="email" className="block text-xs text-muted">
                   Email
                 </label>
                 <input
@@ -152,65 +108,56 @@ export default function ContactMe() {
                   name="email"
                   type="email"
                   placeholder="you@example.com"
-                  className="w-full px-4 py-3.5 backdrop-blur-sm bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/40 transition-all duration-300 hover:bg-white/15"
+                  className={inputClass}
                   required
                   disabled={state.submitting}
                 />
-                <ValidationError prefix="Email" field="email" errors={state.errors} className="text-red-400 text-xs mt-1" />
+                <ValidationError prefix="Email" field="email" errors={state.errors} className="mt-1 text-xs text-red-500" />
               </div>
 
               <div>
-                <label
-                  htmlFor="subject"
-                  className="block text-sm font-semibold text-gray-300 mb-2 group-hover:text-white transition-colors duration-300"
-                >
+                <label htmlFor="subject" className="block text-xs text-muted">
                   Subject
                 </label>
                 <input
                   id="subject"
                   name="subject"
                   type="text"
-                  placeholder="What's this about?"
-                  className="w-full px-4 py-3.5 backdrop-blur-sm bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/40 transition-all duration-300 hover:bg-white/15"
+                  placeholder="What is this about?"
+                  className={inputClass}
                   required
                   disabled={state.submitting}
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-semibold text-gray-300 mb-2 group-hover:text-white transition-colors duration-300"
-                >
+                <label htmlFor="message" className="block text-xs text-muted">
                   Message
                 </label>
                 <textarea
                   id="message"
                   name="message"
                   rows={5}
-                  placeholder="Your message..."
-                  className="w-full px-4 py-3.5 backdrop-blur-sm bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/40 focus:border-white/40 transition-all duration-300 hover:bg-white/15 resize-none"
+                  placeholder="A short note is enough."
+                  className={`${inputClass} resize-none`}
                   required
                   disabled={state.submitting}
                 />
-                <ValidationError prefix="Message" field="message" errors={state.errors} className="text-red-400 text-xs mt-1" />
+                <ValidationError prefix="Message" field="message" errors={state.errors} className="mt-1 text-xs text-red-500" />
               </div>
 
               <button
                 type="submit"
                 disabled={state.submitting}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-white to-gray-300 hover:from-gray-200 hover:to-gray-400 disabled:opacity-60 disabled:cursor-not-allowed text-black font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-white/25"
+                className="inline-flex h-8 shrink-0 items-center justify-center whitespace-nowrap rounded-md border border-foreground px-3 text-xs font-medium leading-none text-foreground duration-300 hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {state.submitting ? (
-                  <>
-                    <Loader size={18} className="animate-spin" />
-                    Sending…
-                  </>
+                  <span className="inline-flex items-center gap-2">
+                    <Loader size={14} className="animate-spin" />
+                    Sending
+                  </span>
                 ) : (
-                  <>
-                    <Send size={18} />
-                    Send Message
-                  </>
+                  "Send message"
                 )}
               </button>
             </form>
