@@ -9,6 +9,7 @@ import ContactMe from "./pages/ContactMe";
 import CoderBoy from "./components/CoderBoy";
 import Intro from "./components/Intro";
 import TypeMaster from "./components/TypeMaster";
+import Footer from "./components/Footer";
 
 const SECTION_IDS = ["home", "dashboard", "aboutme", "projects", "contactme"];
 
@@ -168,6 +169,8 @@ function App() {
         <section id="contactme" className="scroll-mt-16 lg:scroll-mt-[4.5rem]">
           <ContactMe />
         </section>
+
+        <Footer />
       </main>
     </div>
   );
