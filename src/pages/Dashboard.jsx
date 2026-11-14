@@ -1,25 +1,7 @@
 import { motion } from "framer-motion";
-import { SectionLabel } from "../components/ui";
-import GithubStats from "../components/GithubStats";
-
-const skillGroups = [
-  {
-    title: "Frontend",
-    items: ["React", "Next.js", "TypeScript", "JavaScript", "HTML", "CSS", "Tailwind CSS"],
-  },
-  {
-    title: "Backend",
-    items: ["Laravel", "ASP.NET Core", "FastAPI", "Express", "PHP", "C#", "Python"],
-  },
-  {
-    title: "Mobile & data",
-    items: ["React Native (Expo)", "MySQL", "PostgreSQL", "Firebase", "Microsoft SQL Server"],
-  },
-  {
-    title: "Tools",
-    items: ["Git", "Docker", "TanStack Query", "Figma", "Jira"],
-  },
-];
+import { skillGroups } from "../data/site";
+import { SectionHeader } from "../components/ui";
+import { fade } from "../components/motion";
 
 const workflow = [
   {
@@ -44,87 +26,66 @@ const workflow = [
   },
 ];
 
-const fade = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] } },
-};
-
-export default function Dashboard() {
+export default function Dashboard({ index = 3 }) {
   return (
-    <div className="w-full bg-background px-6 py-24 sm:px-8">
-      <div className="mx-auto max-w-5xl">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={fade}
-        >
-          <SectionLabel>Skills</SectionLabel>
-          <h2 className="max-w-xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            The tools I use to ship products
-          </h2>
-          <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted">
-            I work across the stack. Most projects start in React or Next.js on the client,
-            with Laravel or ASP.NET Core on the server.
-          </p>
-        </motion.div>
+    <div>
+      <SectionHeader index={index} title="Stack" />
 
-        <div className="mt-16 grid gap-12 sm:grid-cols-2">
-          {skillGroups.map((group) => (
-            <motion.div
-              key={group.title}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-40px" }}
-              variants={fade}
-            >
-              <h3 className="text-sm font-medium text-foreground">{group.title}</h3>
-              <p className="mt-3 text-[15px] leading-relaxed text-muted">
-                {group.items.join(", ")}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {skillGroups.map((group) => (
+          <motion.div
+            key={group.title}
+            className="rounded-2xl border border-border bg-card p-5"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-40px" }}
+            variants={fade}
+          >
+            <div className="flex items-baseline justify-between">
+              <h3 className="font-display text-lg font-semibold text-foreground">{group.title}</h3>
+              <span className="font-mono text-xs text-muted">{group.items.length}</span>
+            </div>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {group.items.map((s) => (
+                <li
+                  key={s}
+                  className="rounded-full border border-border px-3 py-1 text-sm text-foreground/85"
+                >
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        ))}
+      </div>
 
-        <motion.div
-          className="mt-24"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={fade}
-        >
-          <GithubStats />
-        </motion.div>
+      <motion.h3
+        className="mt-16 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-60px" }}
+        variants={fade}
+      >
+        How a project usually goes
+      </motion.h3>
 
-        <motion.div
-          className="mt-24"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={fade}
-        >
-          <SectionLabel>Process</SectionLabel>
-          <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            How a project usually goes
-          </h2>
-        </motion.div>
-
-        <div className="mt-12 divide-y divide-border border-y border-border">
-          {workflow.map((item) => (
-            <motion.div
-              key={item.step}
-              className="grid gap-2 py-8 sm:grid-cols-[4rem_8rem_1fr] sm:gap-8 sm:py-10"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-40px" }}
-              variants={fade}
-            >
-              <p className="font-mono text-xs text-muted">{item.step}</p>
-              <h3 className="text-sm font-medium text-foreground">{item.title}</h3>
-              <p className="text-[15px] leading-relaxed text-muted">{item.body}</p>
-            </motion.div>
-          ))}
-        </div>
+      <div className="mt-6 grid border-y border-border sm:grid-cols-2 lg:grid-cols-4">
+        {workflow.map((item, i) => (
+          <motion.div
+            key={item.step}
+            className={`py-6 sm:px-5 sm:first:pl-0 ${i > 0 ? "border-t border-border sm:border-t-0" : ""} ${
+              i % 2 === 1 ? "sm:border-l" : ""
+            } ${i >= 2 ? "sm:border-t lg:border-t-0" : ""} ${i > 0 ? "lg:border-l" : ""} sm:[&:nth-child(3)]:pl-0 lg:[&:nth-child(3)]:pl-5`}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-40px" }}
+            variants={fade}
+          >
+            <p className="font-mono text-xs text-muted">{item.step}</p>
+            <h4 className="mt-2 font-display text-lg font-semibold text-foreground">{item.title}</h4>
+            <p className="mt-2 text-[15px] leading-relaxed text-muted">{item.body}</p>
+          </motion.div>
+        ))}
       </div>
     </div>
   );
