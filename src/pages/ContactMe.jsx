@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleCheck, CircleX, Loader, X } from "lucide-react";
 import { useForm, ValidationError } from "@formspree/react";
-import { SectionLabel } from "../components/ui";
+import { SectionHeader } from "../components/ui";
 
 function getFormspreeId(value) {
   if (!value) return "";
@@ -94,7 +94,7 @@ function Toast({ type, onClose }) {
   );
 }
 
-export default function ContactMe() {
+export default function ContactMe({ index = 6 }) {
   const [state, handleSubmit, resetForm] = useForm(FORMSPREE);
   const formRef = useRef(null);
   const [toast, setToast] = useState(null);
@@ -115,16 +115,16 @@ export default function ContactMe() {
   }, [state.errors]);
 
   return (
-    <div className="w-full bg-background px-6 py-24 sm:px-8">
-      <div className="contact-container mx-auto max-w-5xl">
+    <div>
+      <SectionHeader index={index} title="Contact" />
+      <div className="rounded-2xl border border-border bg-card p-6 sm:p-10">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          <SectionLabel>Contact</SectionLabel>
-          <h2 className="max-w-xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="max-w-xl font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             If you have a project or a question, write.
           </h2>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted">
